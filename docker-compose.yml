@@ -1,5 +1,12 @@
 version: '3.7'
 
+x-logging:
+    &json-logging
+    driver: json-file
+    options:
+        max-size: "1m"
+        max-file: "3"
+
 services:
     nas:
         image: dperson/samba:rpi
@@ -22,6 +29,27 @@ services:
         stdin_open: true
         tty: true
         command: '-s "storage;/mnt/storage_space;yes;no;yes;all;none;*;NAS on Raspberry Pi"'
+
+    infrared_controller:
+        build:
+            context: ./infrared_controller
+            dockerfile: Dockerfile
+            args:
+                TZ: 'Asia/Tokyo'
+        image: custom_infrared_controller
+        container_name: infrared_controller
+        volumes:
+            - ./infrared_controller/src:/infrared_controller:ro
+        environment:
+            HTTP_PORT: 8180
+        networks:
+            - frontend # ToDo: Node-Red追加時にネットワークを変更する
+        ports:
+            - "8180:8180" # ToDo: Node-Red追加時にexposeに変更する
+        restart: always
+        logging: *json-logging
+        devices:
+            - /dev/i2c-1:/dev/i2c-1
 
 networks:
     frontend:
