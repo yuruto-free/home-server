@@ -36,3 +36,23 @@
 * サービス名
 
     nodered
+
+* HTTPリクエストのパターン
+
+    | link          | command | 処理内容        |
+    | :----         | :----   | :----           |
+    | /light        | on      | 照明ON          |
+    | /light        | off     | 照明OFF         |
+    | /light        | night   | こだまにする    |
+    | /light        | up      | 明るくする      |
+    | /light        | down    | 暗くする        |
+    | /light        | all     | 全灯            |
+    | /electric-fan | on      | 扇風機の電源ON  |
+    | /electric-fan | off     | 扇風機の電源OFF |
+    | /electric-fan | up      | 扇風機の風量UP  |
+    | /cooler       | on      | 冷房ON          |
+    | /cooler       | off     | 冷房OFF         |
+    | /heater       | on      | 暖房ON          |
+    | /heater       | off     | 暖房OFF         |
+    | /dry          | on      | 除湿ON          |
+    | /dry          | off     | 除湿OFF         |
