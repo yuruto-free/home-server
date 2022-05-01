@@ -1,3 +1,5 @@
 {
-    "light": "json/light.json"
+    "light": "json/light.json",
+    "air_conditioner": "json/air_conditioner.json",
+    "electric_fan": "json/electric_fan.json"
 }
