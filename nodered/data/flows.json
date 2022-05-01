@@ -1,0 +1,651 @@
+[
+    {
+        "id": "a4a734bbbdb1d330",
+        "type": "tab",
+        "label": "家電操作",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "9d7818fd86c8888e",
+        "type": "http in",
+        "z": "a4a734bbbdb1d330",
+        "name": "照明",
+        "url": "/light",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 90,
+        "y": 120,
+        "wires": [
+            [
+                "3d9ec92a11ec6f8b"
+            ]
+        ]
+    },
+    {
+        "id": "3d9ec92a11ec6f8b",
+        "type": "change",
+        "z": "a4a734bbbdb1d330",
+        "name": "キー取得（照明）",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.key",
+                "pt": "msg",
+                "to": "req.body.payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 270,
+        "y": 120,
+        "wires": [
+            [
+                "484cdc85738c622d"
+            ]
+        ]
+    },
+    {
+        "id": "484cdc85738c622d",
+        "type": "change",
+        "z": "a4a734bbbdb1d330",
+        "name": "制御対象の指定（照明）",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.machine",
+                "pt": "msg",
+                "to": "light",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.pattern",
+                "pt": "msg",
+                "to": "light",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.controller",
+                "pt": "msg",
+                "to": "payload.key",
+                "tot": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "payload.key",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 530,
+        "y": 160,
+        "wires": [
+            [
+                "40d5c477702ecfc9"
+            ]
+        ]
+    },
+    {
+        "id": "40d5c477702ecfc9",
+        "type": "function",
+        "z": "a4a734bbbdb1d330",
+        "name": "変換",
+        "func": "// define table\n/*\n  [注意]\n  on, off, nightは、リクエスト時にpayloadとして送信する値（msg.req.body.payload）と一致するように設定してください。\n*/\nconst replace_table = {\n    'light': {\n        'on': {\n            'command': 'on',\n            'message': '照明ON',\n        },\n        'off': {\n            'command': 'off',\n            'message': '照明OFF',\n        },\n        'night': {\n            'command': 'night_light',\n            'message': 'こだまにする',\n        },\n        'up': {\n            'command': 'up',\n            'message': '明るくする',\n        },\n        'down': {\n            'command': 'down',\n            'message': '暗くする',\n        },\n        'all': {\n            'command': 'all_light',\n            'message': '全灯',\n        },\n    },\n    'electric_fan': {\n        'on': {\n            'command': 'power_on',\n            'message': '扇風機ON',\n        },\n        'off': {\n            'command': 'power_off',\n            'message': '扇風機OFF',\n        },\n        'up': {\n            'command': 'fan_up',\n            'message': '風量UP',\n        },\n    },\n    'cooler': {\n        'on': {\n            'command': 'cooler_on',\n            'message': '冷房ON',\n        },\n        'off': {\n            'command': 'power_off',\n            'message': '冷房OFF',\n        },\n    },\n    'heater': {\n        'on': {\n            'command': 'heater_on',\n            'message': '暖房ON',\n        },\n        'off': {\n            'command': 'power_off',\n            'message': '暖房OFF',\n        },\n    },\n    'dry': {\n        'on': {\n            'command': 'dry_on',\n            'message': '除湿ON',\n        },\n        'off': {\n            'command': 'power_off',\n            'message': '除湿OFF',\n        },\n    },\n};\nconst pattern_table = {\n    'light': '照明',\n    'electric_fan': '扇風機',\n    'cooler': '冷房',\n    'heater': '暖房',\n    'dry': '除湿',\n};\n\n// get request data\nconst controller = msg.payload.controller;\nconst pattern = msg.payload.pattern;\nconst machine = msg.payload.machine;\nconst request = replace_table[pattern];\n// set payload data\nif (controller in request) {\n    msg.payload = request[controller];\n    msg.statusCode = 200;\n}\nelse {\n    const target = pattern_table[pattern];\n    msg.payload = {\n        'message': `[${target}]Invalid request`,\n    };\n    msg.statusCode = 400;\n}\nmsg.payload['machine'] = machine;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 810,
+        "y": 460,
+        "wires": [
+            [
+                "23dec661e67b10de"
+            ]
+        ]
+    },
+    {
+        "id": "23dec661e67b10de",
+        "type": "json",
+        "z": "a4a734bbbdb1d330",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 950,
+        "y": 460,
+        "wires": [
+            [
+                "f75f589dca9fcd48"
+            ]
+        ]
+    },
+    {
+        "id": "f75f589dca9fcd48",
+        "type": "change",
+        "z": "a4a734bbbdb1d330",
+        "name": "ヘッダの設定",
+        "rules": [
+            {
+                "t": "set",
+                "p": "headers.content-type",
+                "pt": "msg",
+                "to": "application/json; charset=utf-8",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1120,
+        "y": 460,
+        "wires": [
+            [
+                "08f00876b45acd6d"
+            ]
+        ]
+    },
+    {
+        "id": "08f00876b45acd6d",
+        "type": "http request",
+        "z": "a4a734bbbdb1d330",
+        "name": "赤外線制御サーバ",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://infrared_controller:8180",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "x": 1050,
+        "y": 760,
+        "wires": [
+            [
+                "5b6533ec1688cbdb"
+            ]
+        ]
+    },
+    {
+        "id": "5b6533ec1688cbdb",
+        "type": "change",
+        "z": "a4a734bbbdb1d330",
+        "name": "データの集約",
+        "rules": [
+            {
+                "t": "set",
+                "p": "result",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1260,
+        "y": 940,
+        "wires": [
+            [
+                "0ca4554b0894046e"
+            ]
+        ]
+    },
+    {
+        "id": "0ca4554b0894046e",
+        "type": "change",
+        "z": "a4a734bbbdb1d330",
+        "name": "responseデータ作成",
+        "rules": [
+            {
+                "t": "set",
+                "p": "statusCode",
+                "pt": "msg",
+                "to": "result.status_code",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "result.message",
+                "tot": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "result",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1480,
+        "y": 940,
+        "wires": [
+            [
+                "5d1d9d253600837c"
+            ]
+        ]
+    },
+    {
+        "id": "5d1d9d253600837c",
+        "type": "http response",
+        "z": "a4a734bbbdb1d330",
+        "name": "response",
+        "statusCode": "",
+        "headers": {},
+        "x": 1680,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "13e5df8e471fa1d7",
+        "type": "comment",
+        "z": "a4a734bbbdb1d330",
+        "name": "照明",
+        "info": "",
+        "x": 90,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "1b2e16adbb09f0fa",
+        "type": "comment",
+        "z": "a4a734bbbdb1d330",
+        "name": "扇風機",
+        "info": "",
+        "x": 90,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "6ce0ab3d62b53418",
+        "type": "http in",
+        "z": "a4a734bbbdb1d330",
+        "name": "扇風機",
+        "url": "/electric-fan",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 90,
+        "y": 320,
+        "wires": [
+            [
+                "af7d40fe1cf04f5e"
+            ]
+        ]
+    },
+    {
+        "id": "af7d40fe1cf04f5e",
+        "type": "change",
+        "z": "a4a734bbbdb1d330",
+        "name": "キー取得（扇風機）",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.key",
+                "pt": "msg",
+                "to": "req.body.payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 280,
+        "y": 320,
+        "wires": [
+            [
+                "040e26258eb2e91e"
+            ]
+        ]
+    },
+    {
+        "id": "040e26258eb2e91e",
+        "type": "change",
+        "z": "a4a734bbbdb1d330",
+        "name": "制御対象の指定（扇風機）",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.machine",
+                "pt": "msg",
+                "to": "electric_fan",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.pattern",
+                "pt": "msg",
+                "to": "electric_fan",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.controller",
+                "pt": "msg",
+                "to": "payload.key",
+                "tot": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "payload.key",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 540,
+        "y": 360,
+        "wires": [
+            [
+                "40d5c477702ecfc9"
+            ]
+        ]
+    },
+    {
+        "id": "f41f1bee9cd90e93",
+        "type": "comment",
+        "z": "a4a734bbbdb1d330",
+        "name": "エアコン",
+        "info": "",
+        "x": 100,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "9c2ce1346799f29c",
+        "type": "http in",
+        "z": "a4a734bbbdb1d330",
+        "name": "冷房",
+        "url": "/cooler",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 90,
+        "y": 520,
+        "wires": [
+            [
+                "91ec452ceb63e788"
+            ]
+        ]
+    },
+    {
+        "id": "91ec452ceb63e788",
+        "type": "change",
+        "z": "a4a734bbbdb1d330",
+        "name": "キー取得（冷房）",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.key",
+                "pt": "msg",
+                "to": "req.body.payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 270,
+        "y": 520,
+        "wires": [
+            [
+                "16105e0317273b2c"
+            ]
+        ]
+    },
+    {
+        "id": "16105e0317273b2c",
+        "type": "change",
+        "z": "a4a734bbbdb1d330",
+        "name": "制御対象の指定（冷房）",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.machine",
+                "pt": "msg",
+                "to": "air_conditioner",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.pattern",
+                "pt": "msg",
+                "to": "cooler",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.controller",
+                "pt": "msg",
+                "to": "payload.key",
+                "tot": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "payload.key",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 530,
+        "y": 560,
+        "wires": [
+            [
+                "40d5c477702ecfc9"
+            ]
+        ]
+    },
+    {
+        "id": "cadec83523606bdb",
+        "type": "http in",
+        "z": "a4a734bbbdb1d330",
+        "name": "暖房",
+        "url": "/heater",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 90,
+        "y": 680,
+        "wires": [
+            [
+                "608cd6f24b31040c"
+            ]
+        ]
+    },
+    {
+        "id": "608cd6f24b31040c",
+        "type": "change",
+        "z": "a4a734bbbdb1d330",
+        "name": "キー取得（暖房）",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.key",
+                "pt": "msg",
+                "to": "req.body.payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 270,
+        "y": 680,
+        "wires": [
+            [
+                "8fea7775063ff4a4"
+            ]
+        ]
+    },
+    {
+        "id": "8fea7775063ff4a4",
+        "type": "change",
+        "z": "a4a734bbbdb1d330",
+        "name": "制御対象の指定（暖房）",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.machine",
+                "pt": "msg",
+                "to": "air_conditioner",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.pattern",
+                "pt": "msg",
+                "to": "heater",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.controller",
+                "pt": "msg",
+                "to": "payload.key",
+                "tot": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "payload.key",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 530,
+        "y": 720,
+        "wires": [
+            [
+                "40d5c477702ecfc9"
+            ]
+        ]
+    },
+    {
+        "id": "9343912d72f5f439",
+        "type": "http in",
+        "z": "a4a734bbbdb1d330",
+        "name": "除湿",
+        "url": "/dry",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 90,
+        "y": 840,
+        "wires": [
+            [
+                "244f35e233d3622c"
+            ]
+        ]
+    },
+    {
+        "id": "244f35e233d3622c",
+        "type": "change",
+        "z": "a4a734bbbdb1d330",
+        "name": "キー取得（除湿）",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.key",
+                "pt": "msg",
+                "to": "req.body.payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 270,
+        "y": 840,
+        "wires": [
+            [
+                "a49640e7a24f2fa3"
+            ]
+        ]
+    },
+    {
+        "id": "a49640e7a24f2fa3",
+        "type": "change",
+        "z": "a4a734bbbdb1d330",
+        "name": "制御対象の指定（除湿）",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload.machine",
+                "pt": "msg",
+                "to": "air_conditioner",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.pattern",
+                "pt": "msg",
+                "to": "dry",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.controller",
+                "pt": "msg",
+                "to": "payload.key",
+                "tot": "msg"
+            },
+            {
+                "t": "delete",
+                "p": "payload.key",
+                "pt": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 530,
+        "y": 880,
+        "wires": [
+            [
+                "40d5c477702ecfc9"
+            ]
+        ]
+    }
+]

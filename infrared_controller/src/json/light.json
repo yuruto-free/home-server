@@ -1,4 +1,8 @@
 {
     "on": "0123456789ABCDEF",
-    "off": "ABCDEF0123456789"
+    "off": "ABCDEF0123456789",
+    "night_light": "123",
+    "up": "456",
+    "down": "789",
+    "all_light": "ABC"
 }

@@ -41,16 +41,38 @@ services:
         volumes:
             - ./infrared_controller/src:/infrared_controller:ro
         environment:
-            HTTP_PORT: 8180
+            - HTTP_PORT=8180
         networks:
-            - frontend # ToDo: Node-Red追加時にネットワークを変更する
-        ports:
-            - "8180:8180" # ToDo: Node-Red追加時にexposeに変更する
+            - middle
+        expose:
+            - 8180
         restart: always
         logging: *json-logging
         devices:
             - /dev/i2c-1:/dev/i2c-1
 
+    nodered:
+        build:
+            context: ./nodered
+            dockerfile: Dockerfile
+        image: custom_nodered
+        container_name: nodered
+        volumes:
+            - ./nodered/data:/data
+        environment:
+            - PORT=1880
+            - TZ=Asia/Tokyo
+            - FLOWS=/data/flows.json
+        networks:
+            - frontend
+            - middle
+        ports:
+            - 1880:1880
+        restart: always
+        logging: *json-logging
+
 networks:
     frontend:
         name: frontend_network
+    middle:
+        name: middle_network
