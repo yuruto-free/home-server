@@ -31,7 +31,7 @@
 ## Node-Red
 * 使用するベースイメージ
 
-    nodered/node-red:1.3.5-12-minimal-arm32v6
+    nodered/node-red:2.2.2-12
 
 * サービス名
 
