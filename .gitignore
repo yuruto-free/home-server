@@ -102,3 +102,10 @@ dist
 
 # TernJS port file
 .tern-port
+
+# added by user
+node_modules/
+.npm/
+nodered/data/package.json
+nodered/data/.config*
+nodered/data/.flows*
