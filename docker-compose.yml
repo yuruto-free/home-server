@@ -41,7 +41,7 @@ services:
         volumes:
             - ./infrared_controller/src:/infrared_controller:ro
         environment:
-            HTTP_PORT: 8180
+            - HTTP_PORT=8180
         networks:
             - middle
         expose:
@@ -60,16 +60,14 @@ services:
         volumes:
             - ./nodered/data:/data
         environment:
-            PORT: 1880
-            NODE_UID: 1000 # memo: ホストosで「id ${user}」を実行し、得られたuidを反映する
-            NODE_GID: 1000 # memo: ホストosで「id ${user}」を実行し、得られたgidを反映する
-            TZ: 'Asia/Tokyo'
-            FLOWS: '/data/flows.json'
+            - PORT=1880
+            - TZ=Asia/Tokyo
+            - FLOWS=/data/flows.json
         networks:
             - frontend
             - middle
         ports:
-            - "1880:1880"
+            - 1880:1880
         restart: always
         logging: *json-logging
 
