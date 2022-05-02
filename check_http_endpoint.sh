@@ -22,6 +22,7 @@
     option='" status code:%{http_code}\n"'
     cmd="curl -X POST -H 'Content-Type: application/json' -d '${data}' ${url} -w ${option}"
     echo link name: ${linkName}, command: ${command}
+    echo URL: ${url}
     eval ${cmd}
     echo
     sleep 1

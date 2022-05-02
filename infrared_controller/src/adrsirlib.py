@@ -5,6 +5,15 @@
 
 import smbus
 
+class CustomSMBus:
+    def __init__(self, num):
+        pass
+    def write_i2c_block_data(self, addr, command, data):
+        pass
+    def read_i2c_block_data(self, addr, command, size):
+        data = [0] + [i for i in range(size - 1)]
+        return data
+
 class Adrsir():
     def __init__(self):
         # I2C address of ADRSIR
@@ -16,7 +25,7 @@ class Adrsir():
         self.__W2_data_num_write = 0x29
         self.__W3_data_write     = 0x39
         self.__T1_trans_start    = 0x59
-        self.__bus = smbus.SMBus(1)
+        self.__bus = CustomSMBus(1)
 
     def get(self, no):
         # ==================================== #
