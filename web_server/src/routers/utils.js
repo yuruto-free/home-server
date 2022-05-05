@@ -22,6 +22,23 @@ log4js.configure({
 });
 const logger = log4js.getLogger('default');
 
+// define CustomError
+class CustomError extends Error {
+    constructor(message, statusCode) {
+        super(message);
+        this.statusCode = statusCode;
+    }
+}
+// define CustomResult
+class CustomResult {
+    constructor(message, statusCode) {
+        this.message = message;
+        this.statusCode = statusCode;
+    }
+}
+
 module.exports = {
     logger: logger,
+    CustomError: CustomError,
+    CustomResult: CustomResult,
 };

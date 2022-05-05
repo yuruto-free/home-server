@@ -56,3 +56,46 @@
     | /heater       | off     | 暖房OFF         |
     | /dry          | on      | 除湿ON          |
     | /dry          | off     | 除湿OFF         |
+
+## Nginx
+* 使用するベースイメージ
+
+    nginx:latest
+
+* サービス名
+
+    nginx
+
+* ルーティング
+
+    | url         | access to        |
+    | :---        | :---             |
+    | /           | web_server:3000/ |
+    | /phpmyadmin | phpmyadmin:9000/ |
+
+## Database
+* 使用するベースイメージ
+
+    linuxserver/mariadb:10.5.15
+
+* サービス名
+
+    database
+
+## phpMyAdmin
+* 使用するベースイメージ
+
+    arm64v8/phpmyadmin:fpm-alpine
+
+* サービス名
+
+    phpmyadmin
+
+## Web Server
+* 使用するベースイメージ
+
+    node:16-alpine3.11
+
+* サービス名
+
+    web_server
