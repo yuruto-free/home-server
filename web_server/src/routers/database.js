@@ -16,7 +16,7 @@ const models = {
         'Controller',
         {
             id: {
-                type: DataTypes.INTEGER(11),
+                type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true,
             },
@@ -34,7 +34,7 @@ const models = {
                 allowNull: false,
             },
         }, {
-            timestamps: true,
+            timestamps: false,
             freezeTableName: true, // fixed table name
         },
     ),
@@ -42,7 +42,7 @@ const models = {
         'Command',
         {
             id: {
-                type: DataTypes.INTEGER(11),
+                type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true,
             },
@@ -54,14 +54,18 @@ const models = {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            controller: {
+                type: DataTypes.INTEGER,
+                references: { model: 'Controller', key: 'id' }, // foreign key
+                onUpdate: 'cascade', // auto update
+                onDelete: 'cascade', // auto update
+            }
         }, {
-            timestamps: true,
+            timestamps: false,
             freezeTableName: true, // fixed table name
         },
     ),
 };
-// setup foreign key
-models.Command.belongsTo(models.Controller, { foreignKey: 'controller' });
 
 module.exports = {
     sequelize: sequelize,

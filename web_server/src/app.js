@@ -2,7 +2,7 @@ const express = require('express');
 const { logger } = require('./routers/utils.js');
 const path = require('path');
 const ECT = require('ect');
-const ect = ECT({watch: true, root: path.resolve(__dirname, './views'), ext: '.ect'});
+const ect = ECT({ watch: true, root: path.resolve(__dirname, './views'), ext: '.ect' });
 
 // =============
 // configuration
@@ -22,6 +22,6 @@ app.use('/', indexRouter);
 // ====================
 const port = process.env.PORT || 3000;
 const sequelize = require('./routers/database.js').sequelize;
-sequelize.sync().then(() => {
+sequelize.sync({ force: false, alter: true }).then(() => {
     app.listen(port, () => logger.info(`Web Server listening on port ${port}!`));
 });
