@@ -1,0 +1,94 @@
+<% extend 'layout' %>
+
+<div class="row justify-content-center mt-3">
+    <div class="col-12 col-md-8">
+        <h3 class="h3">赤外線機器制御</h3>
+    </div>
+    <div class="col-12 col-md-4">
+        <h3 class="h3"><a href="/">Back to Top Page</a></h3>
+    </div>
+</div>
+<div class="row justify-content-center mt-1">
+    <div class="col-12 mx-auto">
+    <% if @controllers?.length : %>
+        <% for controller in @controllers : %>
+        <div class="row mt-2">
+            <div class="col-12">
+                <h4 class="h4"><%= controller.detail %></h4>
+            </div>
+        </div>
+        <div class="row">
+            <% @targets = @filtering(@commands, controller.id) %>
+            <% for target in @targets : %>
+            <div class="col-12 col-md-6 mt-1">
+                <button type="button" class="btn btn-outline-primary btn-block irc-button" data-link="<%= controller.link %>" data-command="<%= target.cmd %>">
+                    <%= target.name %>
+                </button>
+            </div>
+            <% end %>
+        </div>
+        <% end %>
+    <% else : %>
+        controller empty
+    <% end %>
+    </div>
+</div>
+
+<div class="position-fixed p-3" style="z-index: 5; right: 0; top: 0;">
+    <div id="toast-success" class="toast hide" role="status" aria-live="assertive" aria-atomic="true" data-delay="1000">
+        <div class="toast-header bg-info text-white">
+            <strong class="mr-auto">Success</strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body bg-info text-white">
+            <span id="result-success"></span>
+        </div>
+    </div>
+</div>
+<div class="position-fixed p-3" style="z-index: 5; right: 0; top: 0;">
+    <div id="toast-failed" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="1000">
+        <div class="toast-header bg-danger text-white">
+            <strong class="mr-auto">Failed</strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body bg-danger text-white">
+            <span id="result-failed"></span>
+        </div>
+    </div>
+</div>
+
+<% block 'scripts' : %>
+<script>
+(function () {
+    const ircButtons = document.getElementsByClassName('irc-button');
+
+    for (const button of ircButtons) {
+        button.addEventListener('click', function () {
+            const link = button.dataset.link;
+            const command = button.dataset.command;
+
+            // ボタン押下時に呼ばれる処理
+            fetch(`http://${location.hostname}:1880/${link}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({payload: command}),
+            }).then((response) => {
+                return response.text();
+            }).then((result) => {
+                $('#result-success').text(result);
+                $('#toast-success').toast('show');
+            }).catch((err) => {
+                $('#result-failed').text(err.message);
+                $('#toast-failed').toast('show');
+            });
+        });
+    }
+}());
+</script>
+<% end %>
