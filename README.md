@@ -41,6 +41,23 @@ docker-compose up -d
 1. ファイル選択から、ダウンロードした「command.csv」を選択する。
 1. ページ下部の「実行」を押下する。
 
+### docker-composeの利用
+#### ログの確認
+```sh
+# ログを出力
+docker-compose logs
+# 時間でソート
+docker-compose logs -t | sort -k 2
+```
+
+#### 不要なイメージを削除
+```sh
+# 中間イメージ、ビルド時のキャッシュも削除
+docker system prune -a
+# 未使用のボリュームの削除
+docker system prune --volumes
+```
+
 ## コンテナ構成
 ### NAS
 * 使用するベースイメージ
